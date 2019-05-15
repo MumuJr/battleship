@@ -45,11 +45,22 @@ public class SalvoController {
                     put("created", game.getDateCreated());
                     put("gamePlayers", getGPMap(game.getGamePlayers()));
                     put("ships", gamePlayer.map(gp -> gp.getShips()).orElse(null));
+                    put("salvo", game.getGamePlayers().stream().flatMap(gp -> getSalvoMap(gp.getSalvos()).stream()).collect(toList()));
                 }};
             } else {
                 return null;
             }
         }
+
+        private List<LinkedHashMap<String, Object>> getSalvoMap(Set<Salvo> salvos){
+        return salvos.stream()
+                .map(salvo -> new LinkedHashMap<String, Object>(){{
+                    put("id" , salvo.getId());
+                    put("playerId", salvo.getGamePlayer().getPlayer().getId());
+                    put("turn" , salvo.getTurn());
+                    put("location", salvo.getLocation());
+                }}).collect(toList());
+    }
 
         private List<LinkedHashMap<String, Object>> getGPMap(Set<GamePlayer> gps){
             return gps.stream()
@@ -59,3 +70,4 @@ public class SalvoController {
                      }}).collect(toList());
         }
 }
+

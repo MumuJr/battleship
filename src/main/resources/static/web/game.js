@@ -1,8 +1,7 @@
 let game;
 let playerOne;
 let playerTwo;
-var grid = [];
-var row = [];
+
 
 var gameViewURL = "http://localhost:8080/api/game_view/";
 let searchParams = new URLSearchParams(location.search);
@@ -22,7 +21,15 @@ function fetchData(gameid){
         .then(function (){
             displayVsPlayers();
             whoIsPlaying();
+
+            createShipBoard();
             placeShips();
+
+            createSalvoBoard();
+            fireSalvo();
+
+            isMyShipHit();
+
 
         })
         .catch(function(error) {
@@ -56,13 +63,14 @@ function whoIsPlaying() {
 
 }
 
-function createBoard(){
+function createShipBoard(){
 
     var column = [0,1,2,3,4,5,6,7,8,9,10];
     var cell = [1,2,3,4,5,6,7,8,9,10];
     var row = ["A","B","C","D","E","F","G","H","I","J"]
 
     var result = "<table border='1' class='table'>";
+    result += "<p>" + "Player Ships Table" + "</p>";
 
     column.forEach(column => {
         result += "<td>" + column + "</td>";
@@ -79,18 +87,73 @@ function createBoard(){
 
     result += "</table>";
 
-    document.getElementById('TableBox').innerHTML = result;
+    document.getElementById('shipsTable').innerHTML = result;
 
 }
 
-createBoard();
+
+
+function createSalvoBoard(){
+
+    var column = [0,1,2,3,4,5,6,7,8,9,10];
+    var cell = [1,2,3,4,5,6,7,8,9,10];
+    var row = ["A","B","C","D","E","F","G","H","I","J"]
+
+    var result = "<table border='1' class='table'>";
+        result += "<p>" + "Player One Salvo Table" + "</p>";
+
+    column.forEach(column => {
+        result += "<td>" + column + "</td>";
+    });
+
+    row.forEach(row => {
+        result += "<tr>"
+        result += "<td>" + row.toString() + "</td>";
+        cell.forEach(cell =>{
+            result += `<td class=${row+cell}></td>`;
+        })
+        result += "</tr>"
+    });
+
+    result += "</table>";
+
+    document.getElementById('salvoTable').innerHTML = result;
+
+}
+
+
+
 
 
 function placeShips(){
     game.ships.forEach(ship => ship.location
-        .forEach(loc => document.querySelectorAll('.' + loc)
+        .forEach(loc => document.querySelectorAll('#shipsTable .' + loc)
             .forEach(cell => cell.classList.add("shipPlaced")))
     );
+}
+
+
+function isMyShipHit(){
+
+    game.salvo.forEach(enemySalvo => { if(Number(gameViewValue) !== enemySalvo.playerId)
+        enemySalvo.location
+            .forEach(loc => document.querySelectorAll('#shipsTable .' + loc)
+                .forEach(cell => cell.classList.add("shipHit") + (cell.innerHTML = enemySalvo.turn)))
+    });
+
+}
+
+
+function fireSalvo(){
+    game.salvo.forEach(salvos => { if(Number(gameViewValue) === salvos.playerId){
+        salvos.location
+            .forEach(loc => document.querySelectorAll('#salvoTable .' + loc)
+                .forEach(cell => cell.classList.add("salvoShot") + (cell.innerHTML = salvos.turn)))}
+                else {
+                    console.log("No Salvos!");
+        }
+        }
+    )
 }
 
 

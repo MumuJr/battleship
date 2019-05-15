@@ -20,7 +20,7 @@ public class SalvoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo) {
+	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo, SalvoRepository salvoRepo) {
 		return (args) -> {
 
 			Player player1 = new Player("Jack", "Bauer", "j.bauer@ctu.gov");
@@ -51,24 +51,37 @@ public class SalvoApplication {
 			GamePlayer firstGame4Player = new GamePlayer(game4, player4, date2);
 			GamePlayer secondGame4Player = new GamePlayer(game4, player2, date3);
 			GamePlayer firstGame5Player = new GamePlayer(game5, player4, date4);
-//			GamePlayer secondGame5Player = new GamePlayer(game5, player1, date5);
+			GamePlayer secondGame5Player = new GamePlayer(game5, player1, date5);
 
 
 
 
-			Ship cruiser = new Ship("cruiser", Arrays.asList("A1", "A2", "A3", "A4", "A5"));
+
 			Ship destroyer = new Ship("destroyer", Arrays.asList("B1", "B2", "B3", "B4"));
 			Ship boat = new Ship("boat", Arrays.asList("C2"));
+
+
 			Ship sailboat = new Ship("sailboat", Arrays.asList("G5", "G6"));
+			Ship cruiser = new Ship("cruiser", Arrays.asList("A1", "A2", "A3", "A4", "A5"));
 
+			Salvo g1Gp1shot1 = new Salvo(Arrays.asList("A1", "A2", "A3"), 1);
+			Salvo g1Gp1shot2 = new Salvo(Arrays.asList("C1", "C7", "B9"), 2);
 
-			secondGame1Player.addShip(sailboat);
-			secondGame1Player.addShip(cruiser);
-
+			Salvo g1Gp2shot1 = new Salvo(Arrays.asList("B4", "G5", "G7"), 1);
+			Salvo g1Gp2shot2 = new Salvo(Arrays.asList("C2", "C3", "C7"), 2);
 
 
 			firstGame1Player.addShip(destroyer);
 			firstGame1Player.addShip(boat);
+			firstGame1Player.addSalvo(g1Gp1shot1);
+			firstGame1Player.addSalvo(g1Gp1shot2);
+
+
+
+			secondGame1Player.addShip(sailboat);
+			secondGame1Player.addShip(cruiser);
+			secondGame1Player.addSalvo(g1Gp2shot1);
+			secondGame1Player.addSalvo(g1Gp2shot2);
 
 
 
@@ -97,7 +110,7 @@ public class SalvoApplication {
 			gamePlayerRepo.save(secondGame4Player);
 
 			gamePlayerRepo.save(firstGame5Player);
-//			gamePlayerRepo.save(secondGame5Player);
+			gamePlayerRepo.save(secondGame5Player);
 
 
 			shipRepo.save(cruiser);
@@ -105,6 +118,10 @@ public class SalvoApplication {
 			shipRepo.save(boat);
 			shipRepo.save(sailboat);
 
+			salvoRepo.save(g1Gp1shot1);
+			salvoRepo.save(g1Gp1shot2);
+			salvoRepo.save(g1Gp2shot1);
+			salvoRepo.save(g1Gp2shot2);
 
 		};
 	}

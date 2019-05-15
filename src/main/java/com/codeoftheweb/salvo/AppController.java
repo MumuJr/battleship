@@ -11,5 +11,6 @@ public class AppController {
     private GameRepository gameRepository;
     private GamePlayerRepository gamePlayerRepository;
     private ShipRepository shipRepository;
+    private SalvoRepository salvoRepository;
 
 }
