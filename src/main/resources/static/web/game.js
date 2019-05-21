@@ -22,10 +22,10 @@ function fetchData(gameid){
             displayVsPlayers();
             whoIsPlaying();
 
-            createShipBoard();
+            createTable("Player Ships Table", "shipsTable");
             placeShips();
 
-            createSalvoBoard();
+            createTable("Player One Salvo Table", "salvoTable");
             fireSalvo();
 
             isMyShipHit();
@@ -63,14 +63,14 @@ function whoIsPlaying() {
 
 }
 
-function createShipBoard(){
+function createTable(text1, text2){
 
     var column = [0,1,2,3,4,5,6,7,8,9,10];
     var cell = [1,2,3,4,5,6,7,8,9,10];
     var row = ["A","B","C","D","E","F","G","H","I","J"]
 
     var result = "<table border='1' class='table'>";
-    result += "<p>" + "Player Ships Table" + "</p>";
+    result += "<p>" + text1 + "</p>";
 
     column.forEach(column => {
         result += "<td>" + column + "</td>";
@@ -87,40 +87,9 @@ function createShipBoard(){
 
     result += "</table>";
 
-    document.getElementById('shipsTable').innerHTML = result;
+    document.getElementById(text2).innerHTML = result;
 
 }
-
-
-
-function createSalvoBoard(){
-
-    var column = [0,1,2,3,4,5,6,7,8,9,10];
-    var cell = [1,2,3,4,5,6,7,8,9,10];
-    var row = ["A","B","C","D","E","F","G","H","I","J"]
-
-    var result = "<table border='1' class='table'>";
-        result += "<p>" + "Player One Salvo Table" + "</p>";
-
-    column.forEach(column => {
-        result += "<td>" + column + "</td>";
-    });
-
-    row.forEach(row => {
-        result += "<tr>"
-        result += "<td>" + row.toString() + "</td>";
-        cell.forEach(cell =>{
-            result += `<td class=${row+cell}></td>`;
-        })
-        result += "</tr>"
-    });
-
-    result += "</table>";
-
-    document.getElementById('salvoTable').innerHTML = result;
-
-}
-
 
 
 
@@ -155,7 +124,6 @@ function fireSalvo(){
         }
     )
 }
-
 
 
 

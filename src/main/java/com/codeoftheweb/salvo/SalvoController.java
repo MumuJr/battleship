@@ -27,6 +27,7 @@ public class SalvoController {
                         put("id", game.getId());
                         put("date", game.getDateCreated());
                         put("gamePlayers", game.getGamePlayers());
+                        put("score", game.getScores());
                     }}).collect(toList());
         }
 

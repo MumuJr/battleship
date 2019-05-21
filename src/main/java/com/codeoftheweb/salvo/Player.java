@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
@@ -21,9 +22,13 @@ public class Player {
     private String firstName;
     private String lastName;
     private String userName;
+    private Long win;
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers = new HashSet<>();
+
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
 
 
     public Player(String first, String last, String email){
@@ -46,6 +51,21 @@ public class Player {
 
     public long getId() {
         return id;
+    }
+
+
+    public Long getWin() {
+        return scores.stream().filter(score -> score.getScore() == 1).count();
+    }
+    public Long getLoss() {
+        return scores.stream().filter(score -> score.getScore() == 0).count();
+    }
+    public Long getTie() {
+        return scores.stream().filter(score -> score.getScore() == .5).count();
+    }
+
+    public Double getScore() {
+        return scores.stream().map(s -> s.getScore()).reduce((a , b) -> a + b).orElse(0.0);
     }
 
     public String getFirstName(){
@@ -72,6 +92,12 @@ public class Player {
         return firstName + " " + lastName;
     }
 
+    public Set<Score> getScores() {
+        return scores;
+    }
 
-
+    public void addScore(Score score){
+        score.setPlayer(this);
+        scores.add(score);
+    }
 }

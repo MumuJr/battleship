@@ -21,6 +21,11 @@ public class Game {
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers = new HashSet<>();
 
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
+
+
+
     public Game(){ }
 
     public Game(LocalDateTime gameCreated){
@@ -40,8 +45,19 @@ public class Game {
         return id;
     }
 
+
+
     @JsonIgnore
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
+    }
+
+    public void addScore(Score score){
+        score.setGame(this);
+        scores.add(score);
+    }
+
+    public Set<Score> getScores() {
+        return scores;
     }
 }

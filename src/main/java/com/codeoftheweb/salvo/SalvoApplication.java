@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 
-import java.lang.reflect.Array;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 
 
@@ -20,7 +20,7 @@ public class SalvoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo, SalvoRepository salvoRepo) {
+	public CommandLineRunner initData(PlayerRepository playerRepo, GameRepository gameRepo, GamePlayerRepository gamePlayerRepo, ShipRepository shipRepo, SalvoRepository salvoRepo, ScoreRepository scoreRepo) {
 		return (args) -> {
 
 			Player player1 = new Player("Jack", "Bauer", "j.bauer@ctu.gov");
@@ -40,18 +40,27 @@ public class SalvoApplication {
 			Game game3 = new Game(date3);
 			Game game4 = new Game(date3);
 			Game game5 = new Game(date3);
+			Game game6 = new Game(date4);
 
 
 			GamePlayer firstGame1Player = new GamePlayer(game1, player1, date4);
 			GamePlayer secondGame1Player = new GamePlayer(game1, player2, date4);
+
 			GamePlayer firstGame2Player = new GamePlayer(game2, player1, date5);
 			GamePlayer secondGame2Player =new GamePlayer(game2, player2, date5);
+
+
 			GamePlayer firstGame3Player = new GamePlayer(game3, player2, date3);
 			GamePlayer secondGame3Player = new GamePlayer(game3, player4, date1);
-			GamePlayer firstGame4Player = new GamePlayer(game4, player4, date2);
-			GamePlayer secondGame4Player = new GamePlayer(game4, player2, date3);
+
+
+			GamePlayer firstGame4Player = new GamePlayer(game4, player2, date2);
+			GamePlayer secondGame4Player = new GamePlayer(game4, player1, date3);
+
 			GamePlayer firstGame5Player = new GamePlayer(game5, player4, date4);
 			GamePlayer secondGame5Player = new GamePlayer(game5, player1, date5);
+
+			GamePlayer firstGame6Player = new GamePlayer(game6, player3, date1);
 
 
 
@@ -71,6 +80,19 @@ public class SalvoApplication {
 			Salvo g1Gp2shot2 = new Salvo(Arrays.asList("C2", "C3", "C7"), 2);
 
 
+
+
+			Score g1Gp1Score = new Score(1.0, date5);
+			Score g1Gp2Score = new Score(0.0, date5);
+			Score g2Gp1Score = new Score(0.5, date4);
+			Score g2Gp2Score = new Score(0.5, date4);
+			Score g3Gp1Score = new Score(1.0, date4);
+			Score g3Gp2Score = new Score(0.0, date4);
+
+
+
+
+
 			firstGame1Player.addShip(destroyer);
 			firstGame1Player.addShip(boat);
 			firstGame1Player.addSalvo(g1Gp1shot1);
@@ -84,12 +106,42 @@ public class SalvoApplication {
 			secondGame1Player.addSalvo(g1Gp2shot2);
 
 
+//			Game ONE
+			player1.addScore(g1Gp1Score);
+			game1.addScore(g1Gp1Score);
+
+			player2.addScore(g1Gp2Score);
+			game1.addScore(g1Gp2Score);
+
+
+//			Game TWO
+			player1.addScore(g2Gp1Score);
+			game2.addScore(g2Gp1Score);
+
+			player2.addScore(g2Gp2Score);
+			game2.addScore(g2Gp2Score);
+
+
+//			Game Three
+			player2.addScore(g3Gp1Score);
+			game3.addScore(g3Gp1Score);
+
+			player4.addScore(g3Gp2Score);
+			game3.addScore(g3Gp2Score);
+
+
+
+
+
+
 
 			gameRepo.save(game1);
 			gameRepo.save(game2);
 			gameRepo.save(game3);
 			gameRepo.save(game4);
 			gameRepo.save(game5);
+			gameRepo.save(game6);
+
 
 			playerRepo.save(player1);
 			playerRepo.save(player2);
@@ -112,6 +164,9 @@ public class SalvoApplication {
 			gamePlayerRepo.save(firstGame5Player);
 			gamePlayerRepo.save(secondGame5Player);
 
+			gamePlayerRepo.save(firstGame6Player);
+
+
 
 			shipRepo.save(cruiser);
 			shipRepo.save(destroyer);
@@ -122,6 +177,13 @@ public class SalvoApplication {
 			salvoRepo.save(g1Gp1shot2);
 			salvoRepo.save(g1Gp2shot1);
 			salvoRepo.save(g1Gp2shot2);
+
+			scoreRepo.save(g1Gp1Score);
+			scoreRepo.save(g1Gp2Score);
+			scoreRepo.save(g2Gp1Score);
+			scoreRepo.save(g2Gp2Score);
+			scoreRepo.save(g3Gp1Score);
+			scoreRepo.save(g3Gp2Score);
 
 		};
 	}

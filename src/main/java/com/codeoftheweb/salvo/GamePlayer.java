@@ -65,6 +65,7 @@ public class GamePlayer {
         this.player = player;
     }
 
+    @JsonIgnore
     public Game getGame() {
         return game;
     }
