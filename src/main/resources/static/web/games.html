@@ -3,21 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Salvo!</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 </head>
 <body>
+
+    <form id="signin-form" onsubmit="return false">
+        <label>Name: <input type="text" id="username"></label>
+        <label>Password: <input type="text" id="password"></label>
+
+        <button onclick="signIn()">Sign Up</button>
+    </form>
+
+    <form id="login-form" onsubmit="return false">
+        <label>Name: <input type="text" id="loginName"></label>
+        <label>Password: <input type="text" id="loginPassword"></label>
+        <button onclick="logIn()">Log In</button>
+    </form>
+
+    <form id="logOut-form" onsubmit="return false">
+        <button onclick="logOut()">Log Out</button>
+    </form>
+
+
+
     <ol id="gameData">
 
     </ol>
 
     <table id="table">
-        <tr>
-            <td>Name</td>
-            <td>Total Score</td>
-            <td>Win</td>
-            <td>Tie</td>
-            <td>Loss</td>
-        </tr>
+
     </table>
+
 
     <script src="games.js"></script>
 </body>

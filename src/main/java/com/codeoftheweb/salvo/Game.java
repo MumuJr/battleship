@@ -1,12 +1,13 @@
 package com.codeoftheweb.salvo;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Game {
@@ -46,7 +47,6 @@ public class Game {
     }
 
 
-
     @JsonIgnore
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
@@ -59,5 +59,9 @@ public class Game {
 
     public Set<Score> getScores() {
         return scores;
+    }
+
+    public List<Long> getPlayerID(){
+        return gamePlayers.stream().map(gpId -> gpId.getPlayer().getId()).collect(toList());
     }
 }

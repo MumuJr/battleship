@@ -92,8 +92,6 @@ function createTable(text1, text2){
 }
 
 
-
-
 function placeShips(){
     game.ships.forEach(ship => ship.location
         .forEach(loc => document.querySelectorAll('#shipsTable .' + loc)
