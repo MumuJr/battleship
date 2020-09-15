@@ -1,4 +1,6 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.model;
+import com.codeoftheweb.salvo.model.Game;
+import com.codeoftheweb.salvo.model.Player;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -14,7 +16,6 @@ public class Score {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
     private Double score;
-    private LocalDateTime finishDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
@@ -26,10 +27,8 @@ public class Score {
 
     public Score (){ }
 
-    public Score (Double score, LocalDateTime finishDate) {
+    public Score(Double score) {
         this.score = score;
-        this.finishDate = finishDate;
-
     }
 
     public long getId() {
@@ -49,18 +48,6 @@ public class Score {
     }
 
 
-    public LocalDateTime getFinishDate() {
-        return finishDate;
-    }
-
-    public void setFinishDate(LocalDateTime finishDate) {
-        this.finishDate = finishDate;
-    }
-
-    @JsonIgnore
-    public Player getPlayer() {
-        return player;
-    }
 
     public long getPlayerId(){
         return player.getId();
@@ -68,6 +55,11 @@ public class Score {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    @JsonIgnore
+    public Player getPlayer() {
+        return player;
     }
 
     @JsonIgnore

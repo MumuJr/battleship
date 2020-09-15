@@ -1,5 +1,7 @@
 package com.codeoftheweb.salvo;
 
+import com.codeoftheweb.salvo.dao.*;
+import com.codeoftheweb.salvo.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -26,7 +28,6 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -102,12 +103,12 @@ public class SalvoApplication {
 
 
 
-			Score g1Gp1Score = new Score(1.0, date5);
-			Score g1Gp2Score = new Score(0.0, date5);
-			Score g2Gp1Score = new Score(0.5, date4);
-			Score g2Gp2Score = new Score(0.5, date4);
-			Score g3Gp1Score = new Score(1.0, date4);
-			Score g3Gp2Score = new Score(0.0, date4);
+			Score g1Gp1Score = new Score(1.0);
+			Score g1Gp2Score = new Score(0.0);
+			Score g2Gp1Score = new Score(0.5);
+			Score g2Gp2Score = new Score(0.5);
+			Score g3Gp1Score = new Score(1.0);
+			Score g3Gp2Score = new Score(0.0);
 
 
 

@@ -1,11 +1,15 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.api;
 
+import com.codeoftheweb.salvo.dao.*;
+import com.codeoftheweb.salvo.model.Game;
+import com.codeoftheweb.salvo.model.GamePlayer;
+import com.codeoftheweb.salvo.model.Player;
+import com.codeoftheweb.salvo.model.Salvo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -17,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 public class SalvoController {
 
         @Autowired
-        private GameRepository repo;
+        private GameRepository GameRepo;
 
         @Autowired
         private PlayerRepository playerRepo;
@@ -29,40 +33,37 @@ public class SalvoController {
         private SalvoRepository salvoRepo;
 
         @Autowired
-        private ScoreRepository scoreRepo;
-
-        @Autowired
         private ShipRepository shipRepo;
 
+        @Autowired
+        private ScoreRepository scoreRepo;
+
+
+
+    private Optional<Player> getAuthOptional(Authentication auth) {
+
+        return auth == null ? Optional.empty() : playerRepo.findByUserName(auth.getName());
+    }
+
     @RequestMapping("/games")
-        public Map<String, Object> getAll(Authentication authentication) {
-            Optional<Player> playerOptional = getAuthOptional(authentication);
+    public Map<String, Object> getAll(Authentication authentication) {
+        Optional<Player> playerOptional = getAuthOptional(authentication);
 
-            return new LinkedHashMap<String, Object>(){{
-                put("player", playerOptional.map(player -> player.makeDTO()).orElse(null));
-                put("games",  repo.findAll().stream()
-                        .map(game -> new LinkedHashMap<String, Object>(){{
-                            put("id", game.getId());
-                            put("date", game.getDateCreated());
-                            put("gamePlayers", getGPMap(game.getGamePlayers()));
-                            put("score", game.getScores());
-                            put("playerID", game.getPlayerID());
-                        }}).collect(toList()));
-            }};
-        }
-
-
-        private Optional<Player> getAuthOptional(Authentication auth) {
-
-            return auth == null ? Optional.empty() : playerRepo.findByUserName(auth.getName());
-        }
-
+        return new LinkedHashMap<String, Object>(){{
+            put("user", playerOptional.map(player -> player.makeDTO()).orElse(null));
+            put("posts",  GameRepo.findAll().stream()
+                    .map(game -> new LinkedHashMap<String, Object>(){{
+                        put("id", game.getId());
+                        put("date", game.getDateCreated());
+                        put("score", game.getScores());
+                    }}).collect(toList()));
+        }};
+    }
 
 
 
         @RequestMapping("/game_view/{id}")
         public LinkedHashMap<String, Object> getPlayer(@PathVariable long id, Authentication authentication){
-
             Optional<Player> currentPlayer = getAuthOptional(authentication);
 
             Optional<GamePlayer> gamePlayer = gamePlayerRepo.findById(id);
@@ -72,7 +73,6 @@ public class SalvoController {
                 return new LinkedHashMap<String, Object>(){{
                     put("id", game.getId());
                     put("created", game.getDateCreated());
-                    put("gamePlayers", getGPMap(game.getGamePlayers()));
                     put("ships", gamePlayer.map(gp -> gp.getShips()).orElse(null));
                     put("salvo", game.getGamePlayers().stream().flatMap(gp -> getSalvoMap(gp.getSalvos()).stream()).collect(toList()));
                 }};
@@ -84,12 +84,12 @@ public class SalvoController {
         private List<LinkedHashMap<String, Object>> getSalvoMap(Set<Salvo> salvos){
         return salvos.stream()
                 .map(salvo -> new LinkedHashMap<String, Object>(){{
-                    put("id" , salvo.getId());
-                    put("playerId", salvo.getGamePlayer().getPlayer().getId());
-                    put("turn" , salvo.getTurn());
-                    put("location", salvo.getLocation());
-                }}).collect(toList());
-    }
+                put("id" , salvo.getId());
+                put("playerId", salvo.getGamePlayer().getPlayer().getId());
+                put("turn" , salvo.getTurn());
+                put("location", salvo.getLocation());
+            }}).collect(toList());
+        }
 
         private List<LinkedHashMap<String, Object>> getGPMap(Set<GamePlayer> gps){
             return gps.stream()
@@ -100,27 +100,18 @@ public class SalvoController {
                      }}).collect(toList());
         }
 
-    private Map<String, Object> makeMap(String key, Object value) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        map.put(key, value);
-        return map;
-    }
+        private Map<String, Object> makeMap(String key, Object value) {
+            Map<String, Object> map = new HashMap<>();
+            map.put(key, value);
+            map.put(key, value);
+            return map;
+        }
 
 
-    @RequestMapping(value = "/players", method = RequestMethod.POST)
+    @PostMapping(value = "/players")
     public ResponseEntity<Map<String, Object>> createUser(@RequestParam("username") String username, @RequestParam("password") String password){
-
-        System.out.println("entered");
-        System.out.println(username);
-        System.out.println(username);
-        System.out.println(password);
-
-
         if (username.isEmpty() || password.isEmpty()) {
-
             return new ResponseEntity<>(makeMap("error", "Fields Empty"), HttpStatus.FORBIDDEN);
-
         }
 
         Optional<Player> newPlayer = playerRepo.findByUserName(username);

@@ -1,5 +1,6 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.api;
 
+import com.codeoftheweb.salvo.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
