@@ -1,10 +1,9 @@
 package com.codeoftheweb.salvo.api;
 
 import com.codeoftheweb.salvo.dao.*;
-import com.codeoftheweb.salvo.model.Game;
-import com.codeoftheweb.salvo.model.GamePlayer;
 import com.codeoftheweb.salvo.model.Player;
-import com.codeoftheweb.salvo.model.Salvo;
+import com.codeoftheweb.salvo.model.ForComments;
+import com.codeoftheweb.salvo.model.Post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,84 +19,69 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/api")
 public class SalvoController {
 
-        @Autowired
-        private GameRepository GameRepo;
+    @Autowired
+    private PostRepository PostRepo;
 
-        @Autowired
-        private PlayerRepository playerRepo;
+    @Autowired
+    private PlayerRepository playerRepo;
 
-        @Autowired
-        private GamePlayerRepository gamePlayerRepo;
+    @Autowired
+    private ForCommentsRepository forCommentsRepo;
 
-        @Autowired
-        private SalvoRepository salvoRepo;
+    @Autowired
+    private ShipRepository shipRepo;
 
-        @Autowired
-        private ShipRepository shipRepo;
-
-        @Autowired
-        private ScoreRepository scoreRepo;
+    @Autowired
+    private ScoreRepository scoreRepo;
 
 
 
     private Optional<Player> getAuthOptional(Authentication auth) {
-
         return auth == null ? Optional.empty() : playerRepo.findByUserName(auth.getName());
     }
 
-    @RequestMapping("/games")
+    @RequestMapping("/posts")
     public Map<String, Object> getAll(Authentication authentication) {
         Optional<Player> playerOptional = getAuthOptional(authentication);
 
         return new LinkedHashMap<String, Object>(){{
             put("user", playerOptional.map(player -> player.makeDTO()).orElse(null));
-            put("posts",  GameRepo.findAll().stream()
-                    .map(game -> new LinkedHashMap<String, Object>(){{
-                        put("id", game.getId());
-                        put("date", game.getDateCreated());
-                        put("score", game.getScores());
+            put("posts",  PostRepo.findAll().stream()
+                    .map(post -> new LinkedHashMap<String, Object>(){{
+                        put("id", post.getId());
+                        put("date", post.getDateCreated());
+                        put("score", post.getTotalScore());
+                        put("title", post.getTitle());
                     }}).collect(toList()));
         }};
     }
 
 
+     @RequestMapping("/post/{id}")
+            public LinkedHashMap<String, Object> getPlayer(@PathVariable long id, Authentication authentication){
+                Optional<Player> currentPlayer = getAuthOptional(authentication);
 
-        @RequestMapping("/game_view/{id}")
-        public LinkedHashMap<String, Object> getPlayer(@PathVariable long id, Authentication authentication){
-            Optional<Player> currentPlayer = getAuthOptional(authentication);
+                Optional<Post> post = PostRepo.findById(id);
 
-            Optional<GamePlayer> gamePlayer = gamePlayerRepo.findById(id);
-
-            if (gamePlayer.isPresent() && currentPlayer.map(player -> player.equals(gamePlayer.get().getPlayer())).orElse(false)){
-                Game game = gamePlayer.get().getGame();
-                return new LinkedHashMap<String, Object>(){{
-                    put("id", game.getId());
-                    put("created", game.getDateCreated());
-                    put("ships", gamePlayer.map(gp -> gp.getShips()).orElse(null));
-                    put("salvo", game.getGamePlayers().stream().flatMap(gp -> getSalvoMap(gp.getSalvos()).stream()).collect(toList()));
-                }};
-            } else {
-                return null;
+                if (post.isPresent() && currentPlayer.isPresent()){
+                    return new LinkedHashMap<String, Object>(){{
+                        put("id", post.get().getId());
+                        put("created", post.get().getDateCreated());
+                        put("title", post.get().getTitle());
+                        put("Score", post.get().getTotalScore());
+                        put("forComments", post.get().getForComments());
+                    }};
+                } else {
+                    return null;
+                }
             }
-        }
 
-        private List<LinkedHashMap<String, Object>> getSalvoMap(Set<Salvo> salvos){
+
+        private List<LinkedHashMap<String, Object>> getSalvoMap(Set<ForComments> salvos){
         return salvos.stream()
                 .map(salvo -> new LinkedHashMap<String, Object>(){{
                 put("id" , salvo.getId());
-                put("playerId", salvo.getGamePlayer().getPlayer().getId());
-                put("turn" , salvo.getTurn());
-                put("location", salvo.getLocation());
             }}).collect(toList());
-        }
-
-        private List<LinkedHashMap<String, Object>> getGPMap(Set<GamePlayer> gps){
-            return gps.stream()
-                     .map(gp -> new LinkedHashMap<String, Object>() {{
-                         put("id", gp.getId());
-                         put("player", gp.getPlayer());
-                         put("created", gp.getCreated());
-                     }}).collect(toList());
         }
 
         private Map<String, Object> makeMap(String key, Object value) {

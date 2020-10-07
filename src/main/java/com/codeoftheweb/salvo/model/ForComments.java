@@ -1,62 +1,56 @@
 package com.codeoftheweb.salvo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 
 @Entity
-public class Score {
+public class ForComments {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
-    private Double score;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="player_id")
-    private Player player;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="post_id")
     private Post post;
 
-    public Score (){ }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="player_id")
+    private Player player;
 
-    public Score(Double score) {
-        this.score = score;
+    private String comment;
+
+    public ForComments() { }
+
+    public ForComments(String comment, Player player) {
+        this.comment = comment;
+        this.player = player;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public long getId() {
         return id;
     }
 
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
-    public Double getScore(){
-        return score;
-    }
-
-    @JsonIgnore
-    public long getPlayerId(){
-        return player.getId();
-    }
-
-    @JsonIgnore
     public void setId(long id) {
         this.id = id;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    @JsonIgnore
     public Player getPlayer() {
         return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     @JsonIgnore
@@ -67,5 +61,6 @@ public class Score {
     public void setPost(Post post) {
         this.post = post;
     }
+
 
 }

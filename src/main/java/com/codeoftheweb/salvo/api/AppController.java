@@ -9,9 +9,8 @@ public class AppController {
 
     @Autowired
     private PlayerRepository playerRepository;
-    private GameRepository gameRepository;
-    private GamePlayerRepository gamePlayerRepository;
+    private PostRepository postRepository;
     private ShipRepository shipRepository;
-    private SalvoRepository salvoRepository;
+    private ForCommentsRepository forCommentsRepository;
 
 }
